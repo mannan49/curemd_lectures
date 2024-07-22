@@ -466,69 +466,46 @@ namespace Coderbyte_CSharp.Easy_Challenges
         // The array given will not be empty, and each string inside the array will be 
         // of numbers sorted in ascending order and may contain negative numbers.
 
-        public string FindIntersection(string[] strArr)
+    using System;
+
+class MainClass {
+
+  public static string FindIntersection(string[] strArr) {
+
+    string result = "";
+    string[] strArr1 = strArr[0].Split(",");
+    string[] strArr2 = strArr[1].Split(",");
+    
+    foreach (string item1 in strArr1)
+    {
+        foreach (string item2 in strArr2)
         {
-            string result = String.Empty;
-            char delim = ',';
-
-            int[] first  = TokenizeInt(strArr[0], delim);
-            int[] second = TokenizeInt(strArr[1], delim);
-
-            List<int> matches = new List<int>();
-            
-            // find matches between an arrays
-            foreach(int value1 in first)
+            // If there is a match, add it to the result string
+            if (item1.Trim() == item2.Trim())
             {
-                foreach(int value2 in second)
+                if (!string.IsNullOrEmpty(result))
                 {
-                    if (value1 == value2)
-                    {
-                        matches.Add(value1);
-                    }
+                    result += ",";
                 }
+                result += item1.Trim();
             }
-
-            // Convert list to output string
-            StringBuilder sb = new StringBuilder();
-
-            int count = matches.Count;
-            foreach( int value in matches)
-            {
-                sb.Append(value);
-                if (value != matches[count-1])
-                {
-                    sb.Append(",");
-                }
-            }
-
-            result = sb.ToString();
-
-            return result;
-        }
-
-        protected int[] TokenizeInt(string str, char delim)
-        {
-            string[]    strValues   = str.Split(delim);
-            int[]       nums        = new int[strValues.Length];
-
-            for(int index = 0; index < strValues.Length; index++)
-            {
-                try
-                {
-                    nums[index] = Int32.Parse(strValues[index]);
-                }
-                catch (FormatException e)
-                {
-                    Console.WriteLine("Unable to parse {0}", strValues[index]);
-                    Console.Error.Write(e.Message);
-                }
-            }
-
-            return nums;
         }
     }
+    
+    return result;
+
+  }
+
+  static void Main() {  
+
+    // keep this function call here
+    Console.WriteLine(FindIntersection(Console.ReadLine()));
+    
+  } 
+
 }
 
+        
 
 .....................................................................
 
@@ -539,7 +516,8 @@ namespace Coderbyte_CSharp.Easy_Challenges
 {
     class StringPeriod
     {
-        // For this challenge you will need to find the smallest repeating substring.
+    
+        // For this challenge you will need to find the largest repeating substring.
 
         // The function StringPeriods(str) take the str parameter being passed and 
         // determine if there is some substring K that can be repeated N > 1 times 
@@ -556,64 +534,49 @@ namespace Coderbyte_CSharp.Easy_Challenges
 
         // If the input string contains only a single character, your program should 
         // return the string -1.
-        public string StringPeriods(string str)
-        {
-            string  result     = String.Empty;
-            string  sub        = String.Empty;
-            int     maxLength  = -1;
-            int     strLength  = str.Length;
+ using System;
 
+class MainClass {
+    public static string StringPeriods(string str) {
+        int n = str.Length;
 
-            if (strLength > 1)
-            {
-                for (int i = 0; i < strLength / 2; i++)
-                {
-                    sub = str.Substring(0, i + 1);
-
-                    int len = StringCheck(sub, str);
-
-                    if (len > maxLength)
-                    {
-                        maxLength = len;
-                        result = sub;
-                    }
+        // Loop from half the length of the string down to 1
+        for (int len = n / 2; len > 0; len--) {
+       // Check if the current length is a divisor of the string length
+            if (n % len == 0) {
+       // Calculate the number of times the substring would need to repeat
+                int numRepeats = n / len;
+                // Get the substring
+                string substring = str.Substring(0, len);            
+                // Build the repeated string
+                string repeatedStr = "";
+                for (int i = 0; i < numRepeats; i++) {
+                    repeatedStr += substring;
+                }
+                
+                // Check if the repeated string matches the original string
+                if (repeatedStr == str) {
+                    return substring;
                 }
             }
-
-            result = (maxLength != -1) ? result : maxLength.ToString();
-
-
-            return result;
         }
+        
+        // If no repeating substring is found, return "-1"
+        return "-1";
+    }
 
-        protected int StringCheck(string sub, string str)
-        {
-            int           length = -1;
-            int           times  = str.Length / sub.Length;
-            StringBuilder sb     = new StringBuilder();
-
-            for (int index = 0; index < times; index++)
-            {
-                sb.Append(sub);
-            }
-
-            string temp = sb.ToString();
-            if (temp == str)
-            {
-                length = sub.Length;
-            }
-
-
-            return length;
-        }
-
+    static void Main() {
+        // keep this function call here
+        Console.WriteLine(StringPeriods(Console.ReadLine()));
     }
 }
 
-
+    }
+}
 ...................................................................................
 
 using System;
+using System.Text.RegularExpressions;
 
 namespace Coderbyte_CSharp._1_Easy_Challenges
 {
@@ -630,73 +593,36 @@ namespace Coderbyte_CSharp._1_Easy_Challenges
 
         //If the username is valid then your program should return the string true,
         //otherwise return the string false.
+        
 
-        public string CodelandUsernameValidation(string str)
-        {
-            string result = String.Empty;
-
-            bool rule1 = ValidateLength(str);
-            bool rule2 = ValidateStartWithLetter(str);
-            bool rule3 = ValidateOnlyValidCharacters(str);
-            bool rule4 = ValidateEndCharacter(str);
-
-            result = (rule1 && rule2 && rule3 && rule4) ? "true" : "false";
-
-
-            return result;
+        public static string CodelandUsernameValidation(string str) {
+        // Rule 1: Check if the username is between 4 and 25 characters
+        if (str.Length < 4 || str.Length > 25) {
+            return "false";
         }
-
-        protected bool ValidateLength(string str)
-        {
-            bool isValid = false;
-
-            int length = str.Length;
-
-            isValid = (length >= 4 && length <= 25);
-
-            return isValid;
+        
+        // Rule 2: Check if it starts with a letter
+        if (!char.IsLetter(str[0])) {
+            return "false";
         }
-
-        protected bool ValidateStartWithLetter(string str)
-        {
-            bool isValid = false;
-
-            isValid = Char.IsLetter(str[0]);
-
-            return isValid;
+        
+        // Rule 3: Check if it only contains letters, numbers, and underscores
+        // Rule 4: Check if it does not end with an underscore
+        string pattern = @"^[a-zA-Z0-9_]*[a-zA-Z0-9]$";
+        if (!Regex.IsMatch(str, pattern)) {
+            return "false";
         }
+        
+        // If all checks passed, the username is valid
+        return "true";
+    }
 
-        protected bool ValidateOnlyValidCharacters(string str)
-        {
-            bool isValid = true;
-
-            foreach (char c in str)
-            {
-                if (!Char.IsLetterOrDigit(c) && c != '_')
-                {
-                    isValid = false;
-                    break;
-                }
-            }
-
-            return isValid;
-        }
-
-        protected bool ValidateEndCharacter(string str)
-        {
-            bool isValid = false;
-            int  length  = str.Length;
-
-            isValid = (str[length - 1] != '_');
-
-            return isValid;
-        }
-
-
+    static void Main() {
+        // keep this function call here
+        Console.WriteLine(CodelandUsernameValidation(Console.ReadLine()));
     }
 }
-
-
+}
 ....................................................................
 
 
@@ -704,109 +630,67 @@ namespace Coderbyte_CSharp._1_Easy_Challenges
 using System;
 
 class MainClass {
+    Min Window Substring
+// Have the function MinWindowSubstring(strArr) take the array of strings stored in strArr, which will contain only two strings, the first parameter being the string N and the second parameter being a string K of some characters, and your goal is to determine the smallest substring of N that contains all the characters in K. For example: if strArr is ["aaabaaddae", "aed"] then the smallest substring of N that contains the characters a, e, and d is "dae" located at the end of the string. So for this example your program should return the string dae.
+
+// Another example: if strArr is ["aabdccdbcacd", "aad"] then the smallest substring of N that contains all of the characters in K is "aabd" which is located at the beginning of the string. Both parameters will be strings ranging in length from 1 to 50 characters and all of K's characters will exist somewhere in the string N. Both strings will only contains lowercase alphabetic characters.
 
   public static string MinWindowSubstring(string[] strArr) {
-      // Get the length of the main string and the substring to be found
-      int strArr1Size = strArr[0].Length, strArr2Size = strArr[1].Length;
-      
-      // Start with the smallest possible window size, which is the length of strArr[1]
-      for (int limit = strArr2Size; limit <= strArr1Size; ++limit) {
-          // Slide the window across strArr[0]
-          for (int start = 0; start + limit <= strArr1Size; ++start) {
-              // Get the current window substring
-              String subStr = strArr[0].Substring(start, limit);
-              
-              // Convert both strArr[1] and the current window substring into character arrays
-              char[] strArr1ChArr = strArr[1].ToCharArray(), subStrChArr = subStr.ToCharArray();
-              bool checkNext = true;
+        string N = strArr[0];
+        string K = strArr[1];
+        int strArr1Size = N.Length;
+        int strArr2Size = K.Length;
 
-              // Check if all characters in strArr[1] are in the current window
-              for (int i = 0; i < strArr[1].Length; i++) {
-                  if (checkNext) {
-                      bool found = false;
-                      for (int j = 0; j < subStr.Length; j++) {
-                          if (strArr1ChArr[i] == subStrChArr[j]) {
-                              // Mark characters as found by setting them to space
-                              subStrChArr[j] = strArr1ChArr[i] = ' ';
-                              found = true;
-                              break;
-                          }
-                      }
-                      if (!found)
-                          checkNext = false;
-                  } else
-                      break;
-              }
+        // Start with the smallest possible window size, which is the length of K
+        for (int limit = strArr2Size; limit <= strArr1Size; ++limit) {
+            // Slide the window across N
+            for (int start = 0; start + limit <= strArr1Size; ++start) {
+                // Get the current window substring
+                string subStr = N.Substring(start, limit);
+                
+                // Convert both K and the current window substring into character arrays
+                char[] strArr1ChArr = K.ToCharArray();
+                char[] subStrChArr = subStr.ToCharArray();
+                bool checkNext = true;
 
-              // If all characters are found, return the current window substring
-              if (String.Concat(strArr1ChArr).Trim().Length == 0)
-                  return subStr;
-          }
-      }
-      
-      // Return an empty string if no valid window is found
-      return "";
-  }
+                // Check if all characters in K are in the current window
+                for (int i = 0; i < K.Length; i++) {
+                    if (checkNext) {
+                        bool found = false;
+                        for (int j = 0; j < subStr.Length; j++) {
+                            if (strArr1ChArr[i] == subStrChArr[j]) {
+                                // Mark characters as found by setting them to space
+                                subStrChArr[j] = strArr1ChArr[i] = ' ';
+                                found = true;
+                                break;
+                            }
+                        }
+                        if (!found)
+                            checkNext = false;
+                    } else
+                        break;
+                }
 
-  static void Main() {  
-    // Keep this function call here
-    // Read input from the console and split it into an array
-    string input = Console.ReadLine();
-    string[] inputArr = input.Split(',');
-    Console.WriteLine(MinWindowSubstring(inputArr));
-  } 
-}
-
-............................................................................................
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
-class MainClass {
-
-  public static string TreeConstructor(string[] strArr) {
-    // Dictionary to keep track of parent nodes and their children count
-    var parents = new Dictionary<int, int>();
-    // Dictionary to keep track of child nodes to ensure no child has multiple parents
-    var childs = new Dictionary<int, int>();
-
-    // Iterate over each item in the input array
-    foreach(var item in strArr) {
-      // Remove parentheses and split by comma to get parent and child
-      var it = item.Replace("(","").Replace(")","").Split(",");      
-      int parent = Int32.Parse(it[1]); // Parse parent node
-      int child = Int32.Parse(it[0]);  // Parse child node
-
-      // Check if the parent already has children
-      if(parents.ContainsKey(parent)) {
-        parents[parent] += 1; // Increment the children count for this parent
-        // If a parent has more than two children, it's not a valid binary tree
-        if(parents[parent] > 2)
-          return "false";
-      } else {
-        parents.Add(parent, 1); // Add the parent with its first child
-      }
-
-      // Check if the child already has a parent
-      if(childs.ContainsKey(child)) {
-        return "false"; // If a child has more than one parent, it's not valid
-      } else {
-        childs.Add(child, 1); // Add the child to the dictionary
-      }
+                // If all characters are found, return the current window substring
+                if (String.Concat(strArr1ChArr).Trim().Length == 0)
+                    return subStr;
+            }
+        }
+        
+        // Return an empty string if no valid window is found
+        return "";
     }
-    return "true"; // If all checks pass, it's a valid binary tree
-  }
 
-  static void Main() {  
-    // Keep this function call here
-    // Read input from the console and pass it to TreeConstructor function
-    Console.WriteLine(TreeConstructor(Console.ReadLine()));
-  } 
+    static void Main() {
+        // Keep this function call here
+        // Read input from the console and split it into an array
+        string input = Console.ReadLine();
+        string[] inputArr = input.Split(',');
+        Console.WriteLine(MinWindowSubstring(inputArr));
+    }
 }
-
-
-....................................................................
+    }
+............................................................................................
 
 
 using System;
@@ -824,47 +708,35 @@ namespace Coderbyte_CSharp.Medium_Challenges
         // be used in the input. 
 
         // For example: if str is "af5c a#!" then your program should return 1653 1#!. 
-        public string NumberEncoding(string str)
-        {
-            string                  result      = string.Empty;
-            StringBuilder           sb          = new StringBuilder();
-            Dictionary<char, int>   alphabet    = CreateAlphabetMap();
 
-            foreach (char item in str)
-            {
-                // is a letter
-                if (Char.IsLetter(item))
-                {
-                    sb.Append(alphabet[item]);
-                }
+        public static string NumberEncoding(string str) {
+        string result = "";
 
-                // not a letter
-                else
-                {
-                    sb.Append(item);
+        foreach (char c in str) {
+            if (char.IsLetter(c)) {
+                if (char.IsLower(c)) {
+                    // For lowercase letters
+                    result += (c - 'a' + 1).ToString();
+                } else {
+                    // For uppercase letters
+                    result += (c - 'A' + 1).ToString();
                 }
+            } else {
+                // If it's not a letter, keep the character as it is
+                result += c;
             }
-
-            result = sb.ToString();
-            return result;
         }
 
-        protected Dictionary<char, int> CreateAlphabetMap()
-        {
-            Dictionary<char, int> alpha = new Dictionary<char, int>();
+        return result;
+    }
 
-            int value = 1;
-
-            for (char key = 'a'; key <= 'z'; key++, value++)
-            {
-                alpha.Add(key, value);
-            }
-
-            return alpha;
-        }
+    static void Main() {
+        // Keep this function call here
+        Console.WriteLine(NumberEncoding(Console.ReadLine()));
     }
 }
-
+}
+}
 ...........................................................
 
 using System;
@@ -883,56 +755,40 @@ namespace Coderbyte_CSharp.Medium_Challenges
 
         // For example: "wwwggopp" would return 3w2g1o2p. The string will not contain 
         // any numbers, punctuation, or symbols. 
-        public string RunLength(string str)
-        {
-            string          result  = String.Empty;
-            int             length  = str.Length;
-            StringBuilder   sb      = new StringBuilder(); 
+        using System;
 
-            for (int index = 0; index < length; index++)
-            {
-                int count = 0;
+class MainClass {
+    public static string RunLength(string str) {
+        if (string.IsNullOrEmpty(str)) return "";
 
-                if (IsRepeatingChar(str, index, ref count))
-                {
-                    sb.Append(count);
-                    sb.Append(str[index]);
-                    index += count - 1;
-                }
+        string result = "";
+        int count = 1;
 
-                else
-                {
-                    sb.Append(1);
-                    sb.Append(str[index]);
-                }
+        for (int i = 1; i < str.Length; i++) {
+            if (str[i] == str[i - 1]) {
+                // If the current character is the same as the previous one, increment the count
+                count++;
+            } else {
+                // Otherwise, append the count and the previous character to the result
+                result += count.ToString() + str[i - 1];
+                // Reset the count for the new character
+                count = 1;
             }
-
-            result = sb.ToString();
-            return result;
         }
 
-        protected bool IsRepeatingChar(string str, int index, ref int count)
-        {
-            bool repeating = false;
+        // Append the count and the last character
+        result += count.ToString() + str[str.Length - 1];
 
-            int length = str.Length;
-            count = 1;
+        return result;
+    }
 
-            if (index != length - 1)
-            {
-                while ((index < length - 1) && (str[index] == str[index + 1]))
-                {
-                    count++;
-                    index++;
-                }
-            }
-
-            repeating = (count > 1);
-            return repeating;
-        }
+    static void Main() {
+        // Keep this function call here
+        Console.WriteLine(RunLength(Console.ReadLine()));
     }
 }
-
+    }
+}
 
 .....................................................................
 
@@ -1186,7 +1042,6 @@ namespace Coderbyte_CSharp.Medium_Challenges
 ................................................................
 
 
-using System;
 using Coderbyte_CSharp.Easy_Challenges;
 
 namespace Coderbyte_CSharp._3_Hard_Challenges
@@ -1205,70 +1060,45 @@ namespace Coderbyte_CSharp._3_Hard_Challenges
         // program should output 2 because there are only two possible ways to travel 
         // from space (1 1) on a chessboard to space (2 2) while making only moves up 
         // and to the right.
-        public int ChessboardTraveling(string str)
-        {
-            int result = 0;
-            int x, y, a, b;
-            //char* token = nullptr;
-            //char* data = const_cast<char*>(str.c_str());
-            //char* next = nullptr;
+        using System;
 
-            //token = strtok_s(data, "( )", &next); x = *token - '0';
-            //token = strtok_s(NULL, "( )", &next); y = *token - '0';
-            //token = strtok_s(NULL, "( )", &next); a = *token - '0';
-            //token = strtok_s(NULL, "( )", &next); b = *token - '0';
+class MainClass {
+    public static int ChessboardTraveling(string str) {
+        // Parse the input string
+        int x = int.Parse(str.Substring(1, 1));
+        int y = int.Parse(str.Substring(3, 1));
+        int a = int.Parse(str.Substring(6, 1));
+        int b = int.Parse(str.Substring(8, 1));
+        
+        // Calculate the number of steps needed in each direction
+        int rightSteps = a - x;
+        int upSteps = b - y;
+        
+        // Calculate the total number of steps
+        int totalSteps = rightSteps + upSteps;
+        
+        // Calculate the binomial coefficient (totalSteps choose rightSteps)
+        return BinomialCoefficient(totalSteps, rightSteps);
+    }
 
-
-            ParseInput(str, out x, out y, out a, out b);
-
-            int row = a - x;
-            int col = b - y;
-
-            result = Ckn(row, row + col);
-
-            return result;
+    // Function to calculate binomial coefficient C(n, k)
+    public static int BinomialCoefficient(int n, int k) {
+        if (k > n - k) k = n - k; // C(n, k) == C(n, n - k)
+        int result = 1;
+        for (int i = 0; i < k; ++i) {
+            result *= (n - i);
+            result /= (i + 1);
         }
+        return result;
+    }
 
-        protected void ParseInput(string str, out int x, out int y, out int a, out int b)
-        {
-            x = y = a = b = 0;
-
-            // remove index = 0, length-1 for outer parentheses
-            str = str.Substring(1, str.Length - 2);
-
-            // Get strings for 2 positions
-            string[] input    = str.Split(")(".ToCharArray(),     StringSplitOptions.RemoveEmptyEntries);
-            string[] starting = input[0].Split(" ".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
-            string[] ending   = input[1].Split(" ".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
-            
-            x = Convert.ToInt32(starting[0]);
-            y = Convert.ToInt32(starting[1]);
-            a = Convert.ToInt32(ending[0]);
-            b = Convert.ToInt32(ending[1]);
-        }
-
-        protected  int Ckn(int k, int n)
-        {
-            int       result    = 0;
-            int       c         = 1;
-
-            for (int i = n, j = 0; j < k; i--, j++)
-            {
-                c *= i;
-            }
-
-            Factorial factorial = new Factorial();
-
-            var nFact  = factorial.FirstFactorial(n);
-            var nkFact = factorial.FirstFactorial(n-k);
-            var kFact  = factorial.FirstFactorial(k);
-
-            result = (int)(nFact / (kFact * nkFact));
-            return result;
-        }
+    static void Main() {
+        // Keep this function call here
+        Console.WriteLine(ChessboardTraveling(Console.ReadLine()));
     }
 }
-
+}
+}
 ........................................................................
 
 
@@ -1293,67 +1123,44 @@ namespace Coderbyte_CSharp.Hard_Challenges
         // following steps: (1) 5432 - 2345 = 3087, (2) 8730 - 0378 = 8352, 
         // (3) 8532 - 2358 = 6174.
 
-        public int KaprekarsConstant(int num)
-        {
-            int count       = 0;
-            int remainder   = num;
+       
+     using System;
 
-            while (remainder != 6174)
-            {
-                remainder = DescendInt(remainder) - AscendInt(remainder);
-                count++;
-            }
-
-            return count;
+class MainClass {
+    public static int KaprekarsConstant(int num) {
+        int count = 0;
+        
+        while (num != 6174) {
+            // Convert the number to a 4-digit string
+            string numStr = num.ToString("D4");
+            
+            // Sort the digits in descending order
+            char[] descending = numStr.ToCharArray();
+            Array.Sort(descending);
+            Array.Reverse(descending);
+            int descNum = int.Parse(new string(descending));
+            
+            // Sort the digits in ascending order
+            char[] ascending = numStr.ToCharArray();
+            Array.Sort(ascending);
+            int ascNum = int.Parse(new string(ascending));
+            
+            // Subtract the smaller number from the larger number
+            num = descNum - ascNum;
+            
+            // Increment the count
+            count++;
         }
-
-        protected int AscendInt(int num)
-        {
-            int result = 0;
-
-            result = AdjustInt(num, false);
-            return result;
-        }
-
-        protected int DescendInt(int num)
-        {
-            int result = 0;
-
-            result = AdjustInt(num, true);
-            return result;
-        }
-
-	    private int AdjustInt(int num, bool descend)
-        {
-            int     result  = 0;
-            int[]   arr     = ConvertToIntArray(num);
-
-            List<int> valueList = arr.ToList();
-            valueList.Sort();
-
-            if (descend)
-            {
-                valueList.Reverse();
-            }
-
-            result = int.Parse(string.Join("", valueList));
-            return result;
-        }
-
-        private int[] ConvertToIntArray(int value)
-        {
-            var numbers = new Stack<int>();
-
-            for (; value > 0; value /= 10)
-            {
-                numbers.Push(value % 10);
-            }
-
-            return numbers.ToArray();
-        }
-
-
+        
+        return count;
     }
+
+    static void Main() {
+        // Keep this function call here
+        Console.WriteLine(KaprekarsConstant(int.Parse(Console.ReadLine())));
+    }
+}
+
 }
 
 ........................................................................
